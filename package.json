@@ -1,0 +1,17 @@
+{
+  "name": "thegoodfoot",
+  "module": "index.ts",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],  
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
