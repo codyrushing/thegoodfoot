@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useStoryblokApi, storyblokEditable } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+export async function getStaticPaths() {
+  const sbApi = useStoryblokApi();
+  const { data } = await sbApi.get("cdn/stories", {
+    content_type: "page",
+    version: import.meta.env.DEV ? "draft" : "published",
+  });
+
+  return Object.values(data.stories)
+	.map(
+    (story:any) => ({
+        params: { 
+          slug: story.slug === 'index' ? undefined : story.slug,
+        },
+        props: {
+          storySlug: story.slug
+        }
+    })
+  ) as { params: { slug: string; }; props: { storySlug: string } }[];
+}
+
+const sbApi = useStoryblokApi();
+const { storySlug } = Astro.props;
+
+const { data } = await sbApi.get(`cdn/stories/${storySlug}`, {
+  content_type: "page",
+  version: import.meta.env.DEV ? "draft" : "published"
+});
+const story = data.story;
+---
+<Layout title={story.content.title}>
+  <StoryblokComponent blok={story.content} {...storyblokEditable(story)} />
+</Layout>

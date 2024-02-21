@@ -1,0 +1,18 @@
+---
+
+import { Markdown } from 'astro-remote';
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+
+interface RichTextBlok extends SbBlokData {
+    content: string
+}
+
+interface Props {
+    blok: RichTextBlok
+}
+
+const { blok } = Astro.props;
+---
+<div class="markdown-content" {...storyblokEditable(blok)}>
+    <Markdown content={blok.content} />
+</div>

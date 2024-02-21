@@ -4,11 +4,12 @@
   "type": "module",
   "workspaces": [
     "packages/*"
-  ],  
+  ],
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "@storyblok/astro": "^4.0.2",
     "@types/bun": "latest"
   },
   "peerDependencies": {

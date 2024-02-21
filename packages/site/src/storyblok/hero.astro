@@ -1,0 +1,26 @@
+---
+
+import { storyblokEditable, renderRichText, type SbBlokData, type ISbRichtext } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import type { Code, Debug } from 'astro:components';
+
+interface HeroBlok extends SbBlokData {
+  media_credit?: ISbRichtext;
+  content: SbBlokData[]
+}
+
+interface Props {
+    blok: HeroBlok
+}
+
+const { blok } = Astro.props;
+const media_credit = renderRichText(blok.media_credit);
+console.log(blok);
+---
+<section {...storyblokEditable(blok)}>
+  <h1>{blok.heading}</h1>
+  {
+    blok.content.map(b => <StoryblokComponent blok={b} {...storyblokEditable(b)} />)
+  }  
+  { media_credit && <div class="media-credit"><Fragment set:html={media_credit} /></div> }
+</section>
