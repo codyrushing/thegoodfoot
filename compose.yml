@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      # - ./postgres-data:/var/lib/postgresql/data
+      - ./postgres-data:/docker-entrypoint-initdb.d  
+      # - ./postgres-data/init.sql:/docker-entrypoint-initdb.d/init.sql
+          
+    networks: 
+      - goodfoot_dev
+  cms:
+    build: ./packages/cms
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - goodfoot_dev
+    # command: "postgres -c log_statement=all"
+  # site:
+  #   build: ../../packages/site
+  #   ports:
+  #     - "3000:3000"
+  #     - "3001:3001"
+  #   stdin_open: true
+  #   command: ['bun run dev']
+  #   networks:
+  #     - aidkit_dev
+  # cms:
+  #   container_name: strapi
+  #   build: .
+  #   image: strapi:latest
+  #   restart: unless-stopped
+  #   env_file: .env
+  #   environment:
+  #     DATABASE_CLIENT: ${DATABASE_CLIENT}
+  #     DATABASE_HOST: db
+  #     DATABASE_PORT: ${DATABASE_PORT}
+  #     DATABASE_NAME: ${DATABASE_NAME}
+  #     DATABASE_USERNAME: ${DATABASE_USERNAME}
+  #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  #     JWT_SECRET: ${JWT_SECRET}
+  #     ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+  #     APP_KEYS: ${APP_KEYS}
+  #     NODE_ENV: ${NODE_ENV}
+  #   volumes:
+  #     - ./config:/opt/app/config
+  #     - ./src:/opt/app/src
+  #     - ./package.json:/opt/package.json
+  #     - ./yarn.lock:/opt/yarn.lock
+  #     - ./.env:/opt/app/.env
+  #     - ./public/uploads:/opt/app/public/uploads
+  #   ports:
+  #     - "1337:1337"
+  #   networks:
+  #     - strapi
+  #   depends_on:
+  #     - strapiDB
+networks:
+  goodfoot_dev:
+    name: goodfoot_dev
+    driver: bridge
