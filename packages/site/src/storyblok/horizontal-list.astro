@@ -1,0 +1,26 @@
+---
+import { storyblokEditable, renderRichText, type SbBlokData, type ISbRichtext } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+interface HorizontalListBlok extends SbBlokData {
+  content?: SbBlokData[];
+  extra_classes?: string;
+}
+
+interface Props {
+    blok: HorizontalListBlok
+}
+
+const { blok } = Astro.props;
+
+---
+<ul class={`horizontal-list flex list-style-none gap-2 my-2 ${blok.extra_classes || ''}`} {...storyblokEditable(blok)}>
+  {
+    blok.content?.map(b => <StoryblokComponent blok={b} {...storyblokEditable(b)} />)
+  }
+</ul>
+<style>
+  .horizontal-list {
+    list-style: none;
+  }
+</style>

@@ -1,0 +1,1 @@
+export const MAX_CONTENT_WIDTH = 'max-w-6xl';

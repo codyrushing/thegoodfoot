@@ -4,7 +4,8 @@ import { Markdown } from 'astro-remote';
 import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
 
 interface RichTextBlok extends SbBlokData {
-    content: string
+    content: string;
+    extra_classes?: string;
 }
 
 interface Props {
@@ -13,6 +14,6 @@ interface Props {
 
 const { blok } = Astro.props;
 ---
-<div class="markdown-content" {...storyblokEditable(blok)}>
+<div class={`markdown-content ${blok.extra_classes ?? ''}`} {...storyblokEditable(blok)}>
     <Markdown content={blok.content} />
 </div>

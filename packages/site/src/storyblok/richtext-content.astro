@@ -4,7 +4,8 @@ import { Markup } from 'astro-remote';
 import { storyblokEditable, renderRichText, type SbBlokData, type ISbRichtext } from '@storyblok/astro';
 
 interface RichTextBlok extends SbBlokData {
-    content: ISbRichtext
+    content: ISbRichtext;
+    extra_classes?: string;    
 }
 
 interface Props {
@@ -14,6 +15,6 @@ interface Props {
 const { blok } = Astro.props;
 const content = renderRichText(blok.content);
 ---
-<div class="richtext-content" {...storyblokEditable(blok)}>
+<div class={`richtext-content ${blok.extra_classes ?? ''}`} {...storyblokEditable(blok)}>
     <Markup content={content} />
 </div>

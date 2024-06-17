@@ -5,9 +5,8 @@ interface Props {
 
 const { title } = Astro.props;
 ---
-
 <!doctype html>
-<html lang="en">
+<html lang="en" class="sl-theme-dark">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
@@ -17,7 +16,13 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<slot />
+		<div class="flex flex-col items-stretch content-center">
+			<header class="app-header sticky top-0"></header>
+			<main class="app-main">
+				<slot />
+			</main>
+			<footer class="app-footer"></footer>
+		</div>
 	</body>
 </html>
 <style is:global>

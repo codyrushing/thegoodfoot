@@ -1,0 +1,86 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import type { StoryblokImageAsset } from '../types';
+import { MAX_CONTENT_WIDTH } from '../constants';
+import MediaCaption, { shouldShowCaption } from './media-caption.astro';
+
+interface PageSectionBlok extends SbBlokData {
+  media: StoryblokImageAsset;
+  content?: SbBlokData[];
+  content_x_alignment: 'justify-start' | 'justify-end';
+  content_y_alignment: 'justify-start' | 'justify-end' | 'justify-center';
+  content_width: 'w-full' | 'lg:w-1/2' | 'lg:w-1/3' | 'lg:w-2/3';
+  height: 'min-h-0' | 'min-h-screen';
+  tall_screen_height?: '' | 'tall:min-h-[600px]' | 'tall:min-h-[800px]' | 'tall:min-h-[1000px]' | 'tall:min-h-[1200px]'
+  heading?: string;
+  extra_classes?: string;
+  media_fit: 'cover' | 'contain' | 'fill' | 'none';
+  media_opacity: '100';
+  background_color: {
+    _uid: string,
+    color: string,
+    plugin: 'native-color-picker'
+  };
+  media_blend_mode?: string;
+  media_x_position: 'center' | 'left' | 'right',
+  media_y_position: 'center' | 'top' | 'bottom',    
+}
+
+interface Props {
+    blok: PageSectionBlok
+}
+
+const { blok } = Astro.props;
+
+const containerClasses = [`page-section relative overflow-hidden p-4 flex flex-col items-center ${blok.height} w-full`];
+const innerClasses = [`page-section-inner z-10 ${MAX_CONTENT_WIDTH} w-full flex`];
+const contentClasses = ['page-section-content flex flex-col gap-2'];
+
+if(blok.tall_screen_height){
+  containerClasses.push(blok.tall_screen_height);
+}
+
+const hasCaption = shouldShowCaption(blok.media);
+
+if(hasCaption){
+  // margin bottom to prevent overlapping with media caption
+  contentClasses.push('mb-10');
+}
+
+if(blok.content_x_alignment){
+  innerClasses.push(blok.content_x_alignment);
+}
+
+if(blok.content_width){
+  contentClasses.push(blok.content_width);
+}
+
+if(blok.content_y_alignment){
+  containerClasses.push(blok.content_y_alignment);
+}
+
+const mediaOpacity = parseInt(blok.media_opacity);
+const mediaStyle = {
+  maxWidth: 'unset',
+  opacity: (!isNaN(mediaOpacity) ? mediaOpacity : 100)/100,
+  objectPosition: [blok.media_x_position, blok.media_y_position].join(' '),
+  objectFit: blok.media_fit,
+  mixBlendMode: blok.media_blend_mode
+};
+---
+<section class={containerClasses.join(' ')} style={{backgroundColor: blok.background_color?.color || 'transparent'}} {...storyblokEditable(blok)}>
+  <div class={innerClasses.join(' ')}>
+    <div class={contentClasses.join(' ')}>
+      {
+        blok.content?.map(b => <StoryblokComponent blok={b} {...storyblokEditable(b)} />)
+      }  
+    </div>  
+  </div>
+  {
+    blok.media && <figure class="absolute top-0 left-0 right-0 bottom-0 z-0">
+      <img style={mediaStyle} class="w-full h-full object-none" src={blok.media.filename} />
+      { hasCaption ? <MediaCaption {...blok.media} /> : null }
+    </figure>
+  }
+</section>

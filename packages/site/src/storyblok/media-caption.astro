@@ -1,0 +1,33 @@
+---
+import type { StoryblokImageAsset } from '../types';
+import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
+setBasePath("dist/assets");
+
+type Props = StoryblokImageAsset;
+const { title, source, copyright } = Astro.props;
+
+export function shouldShowCaption(media: Props){
+    return media.name || media.source || media.title || media.copyright
+};
+---
+<script>
+  import("@shoelace-style/shoelace/dist/themes/dark.css");
+  import("@shoelace-style/shoelace/dist/components/icon/icon.js");
+</script>
+<figcaption class="media-caption text-xs p-1 absolute bottom-0 left-0 right-0 text-right flex gap-1 justify-end items-center bg-black/50">
+  <sl-icon name="camera"></sl-icon>
+  {
+    [title, source, copyright]
+      .filter(s => s)
+      .map(
+        (s, i, arr) => <div>
+          {
+            /^https?:\/\//.test(s) 
+              ? <a href={s} target="_blank">Source</a> 
+              : s
+          }
+          { (i < arr.length-1) && <span>•</span>}
+        </div>
+      )
+  }
+</figcaption>  

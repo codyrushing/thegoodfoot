@@ -1,0 +1,44 @@
+---
+
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+interface ContentBlok extends SbBlokData {
+  content?: SbBlokData[];
+  extra_classes?: string;
+  text_alignment: 'text-start' | 'text-end' | 'text-center' | 'text-justify';
+  text_color: 'light' | 'dark';
+  background?: boolean;
+}
+
+interface Props {
+    blok: ContentBlok
+}
+
+const { blok } = Astro.props;
+
+const containerClasses = ['content-section p-2 flex flex-col gap-2'];
+
+if(blok.text_alignment){
+  containerClasses.push(blok.text_alignment);
+}
+
+if(blok.text_color === 'light'){
+    containerClasses.push('text-slate-50');
+    if(blok.background){
+        containerClasses.push('bg-black/50');
+    }
+}
+else if(blok.text_color === 'dark'){
+    containerClasses.push('text-slate-950');
+    if(blok.background){
+        containerClasses.push('bg-white/50');
+    }
+}
+
+---
+<div class={containerClasses.join(' ')} {...storyblokEditable(blok)}>
+    {
+        blok.content?.map(b => <StoryblokComponent blok={b} {...storyblokEditable(b)} />)
+    }  
+</div>
