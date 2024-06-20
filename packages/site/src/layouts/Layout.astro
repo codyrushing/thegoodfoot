@@ -52,4 +52,43 @@ const { title } = Astro.props;
 			Courier New,
 			monospace;
 	}
+	
+	h1 {
+		@apply text-4xl;
+		@apply md:text-6xl;
+	}
+
+	h2 {
+		@apply text-3xl;
+		@apply md:text-5xl;
+	}
+
+	h3 {
+		@apply text-2xl;
+		@apply md:text-4xl;
+	}
+
+	h4 {
+		@apply text-lg;
+		@apply md:text-2xl;
+	}
+
+	main {
+		font-size: 1.1rem;
+	}
+
+	main p + p {
+		@apply mt-4;
+	}
+
+	p, li {
+		line-height: 1.2;
+	}
+
+	@media (min-width:768px){
+		main {
+			font-size: 1.3rem;
+		}
+	}
+
 </style>

@@ -4,6 +4,7 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 import type { StoryblokImageAsset } from '../types';
 import { MAX_CONTENT_WIDTH } from '../constants';
 import MediaCaption, { shouldShowCaption } from './media-caption.astro';
+import type { MultiPartHeroBlok } from './multipart-hero.astro';
 
 interface PageSectionBlok extends SbBlokData {
   media: StoryblokImageAsset;
@@ -28,18 +29,26 @@ interface PageSectionBlok extends SbBlokData {
 }
 
 interface Props {
-    blok: PageSectionBlok
+    blok: PageSectionBlok;
+    parentBlok?: MultiPartHeroBlok
 }
 
-const { blok } = Astro.props;
+const { blok, parentBlok } = Astro.props;
 
-const containerClasses = [`page-section relative overflow-hidden p-4 flex flex-col items-center ${blok.height} w-full`];
+const containerClasses = [`page-section relative overflow-hidden p-4 flex flex-col items-center w-full`];
 const innerClasses = [`page-section-inner z-10 ${MAX_CONTENT_WIDTH} w-full flex`];
 const contentClasses = ['page-section-content flex flex-col gap-2'];
 
-if(blok.tall_screen_height){
-  containerClasses.push(blok.tall_screen_height);
+if(!parentBlok || parentBlok.height !== 'min-h-screen'){
+  if(blok.height){
+    containerClasses.push(blok.height);
+  }
+
+  if(blok.tall_screen_height){
+    containerClasses.push(blok.tall_screen_height);
+  }
 }
+
 
 const hasCaption = shouldShowCaption(blok.media);
 
@@ -68,17 +77,18 @@ const mediaStyle = {
   objectFit: blok.media_fit,
   mixBlendMode: blok.media_blend_mode
 };
+
 ---
 <section class={containerClasses.join(' ')} style={{backgroundColor: blok.background_color?.color || 'transparent'}} {...storyblokEditable(blok)}>
   <div class={innerClasses.join(' ')}>
     <div class={contentClasses.join(' ')}>
       {
         blok.content?.map(b => <StoryblokComponent blok={b} {...storyblokEditable(b)} />)
-      }  
+      }
     </div>  
   </div>
   {
-    blok.media && <figure class="absolute top-0 left-0 right-0 bottom-0 z-0">
+    blok.media?.filename && <figure class="absolute top-0 left-0 right-0 bottom-0 z-0">
       <img style={mediaStyle} class="w-full h-full object-none" src={blok.media.filename} />
       { hasCaption ? <MediaCaption {...blok.media} /> : null }
     </figure>

@@ -1,0 +1,51 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+export interface MultiPartHeroBlok extends SbBlokData {
+  sections?: SbBlokData[];
+  height: 'min-h-0' | 'min-h-screen';
+  extra_classes?: string;
+}
+
+interface Props {
+  blok: MultiPartHeroBlok
+}
+
+const { blok } = Astro.props;
+const containerClasses = [`multipart-hero w-full flex`];
+
+if(blok.height){
+  containerClasses.push(blok.height);
+  if(blok.height === 'min-h-screen'){
+    containerClasses.push('managed-height');
+  }
+}
+
+---
+<style>
+  .multipart-hero {
+    flex-direction: column;
+  }
+  .multipart-section {
+    flex: 1;
+  }
+  .multipart-hero.managed-height > .multipart-section > * {
+    min-height: 0;
+  }
+
+  @media(min-aspect-ratio: 1/1){
+    .multipart-hero {
+      flex-direction: row;
+    }
+  }
+</style>
+<section class={containerClasses.join(' ')} {...storyblokEditable(blok)}>
+  { 
+    !!blok.sections && blok.sections.filter(b => b).map(
+      b => <div class="multipart-section flex flex-row flex-1 items-stretch content-stretch">
+        <StoryblokComponent parentBlok={blok} blok={b} {...storyblokEditable(b)} />
+      </div>
+    ) 
+  }
+</section>

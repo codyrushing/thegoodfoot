@@ -22,6 +22,7 @@ export default defineConfig({
             components: {
                 page: 'storyblok/page',
                 page_section: 'storyblok/page-section',
+                multipart_hero: 'storyblok/multipart-hero',
                 content: 'storyblok/content',
                 markdown_content: 'storyblok/markdown-content',
                 richtext_content: 'storyblok/richtext-content',
